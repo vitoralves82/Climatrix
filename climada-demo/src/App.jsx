@@ -6,13 +6,50 @@ import L from 'leaflet';
 export default function App() {
   const [data, setData] = useState(null);
   const [showInfo, setShowInfo] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [selectedScenario, setSelectedScenario] = useState('scenario1');
 
+  // Definição dos cenários
+  const scenarios = {
+    scenario1: {
+      file: '/impact.geojson', // arquivo original
+      name: 'Furacão Irma (2017)',
+      description: 'Caribe Oriental - 5 pontos de exposição',
+      center: [20, -65],
+      zoom: 5
+    },
+    scenario2: {
+      file: '/scenario2_matthew.geojson',
+      name: 'Furacão Matthew (2016)',
+      description: 'Haiti/Cuba - 10 pontos de exposição',
+      center: [19, -74],
+      zoom: 6
+    },
+    scenario3: {
+      file: '/scenario3_maria.geojson',
+      name: 'Furacão Maria (2017)',
+      description: 'Porto Rico - 8 pontos de alta exposição',
+      center: [18.2, -66.5],
+      zoom: 8
+    }
+  };
+
+  // Carregar dados quando cenário mudar
   useEffect(() => {
-    fetch('/impact.geojson')
+    setLoading(true);
+    const scenario = scenarios[selectedScenario];
+    
+    fetch(scenario.file)
       .then(r => r.json())
-      .then(d => setData(d))
-      .catch(err => console.error('Falha no fetch:', err));
-  }, []);
+      .then(d => {
+        setData(d);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Falha ao carregar cenário:', err);
+        setLoading(false);
+      });
+  }, [selectedScenario]);
 
   const onEachFeature = (feature, layer) => {
     if (feature.properties) {
@@ -28,6 +65,8 @@ export default function App() {
       layer.bindPopup(popupContent);
     }
   };
+
+  const currentScenario = scenarios[selectedScenario];
 
   return (
     <div style={{ height: '100vh', width: '100%', position: 'relative' }}>
@@ -46,8 +85,52 @@ export default function App() {
           Climatrix - Precificação de Risco Climático
         </h1>
         <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
-          Protótipo usando CLIMADA v6.0.1 | Furacão Irma (2017)
+          Protótipo usando CLIMADA v6.0.1
         </p>
+      </div>
+
+      {/* Seletor de Cenários */}
+      <div style={{
+        position: 'absolute',
+        top: '80px',
+        left: '20px',
+        background: 'rgba(255, 255, 255, 0.95)',
+        padding: '20px',
+        borderRadius: '8px',
+        zIndex: 1000,
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        maxWidth: '300px'
+      }}>
+        <h3 style={{ margin: '0 0 15px 0', fontSize: '16px', color: '#333' }}>
+          Selecione o Cenário:
+        </h3>
+        <select
+          value={selectedScenario}
+          onChange={(e) => setSelectedScenario(e.target.value)}
+          style={{
+            width: '100%',
+            padding: '10px',
+            fontSize: '14px',
+            borderRadius: '5px',
+            border: '1px solid #ddd',
+            marginBottom: '10px',
+            cursor: 'pointer'
+          }}
+        >
+          {Object.entries(scenarios).map(([key, scenario]) => (
+            <option key={key} value={key}>
+              {scenario.name}
+            </option>
+          ))}
+        </select>
+        <p style={{ margin: '10px 0 0 0', fontSize: '13px', color: '#666' }}>
+          {currentScenario.description}
+        </p>
+        {loading && (
+          <p style={{ margin: '10px 0 0 0', fontSize: '13px', color: '#007bff' }}>
+            Carregando cenário...
+          </p>
+        )}
       </div>
 
       {/* Botão de Informações */}
@@ -71,6 +154,42 @@ export default function App() {
         ℹ️ Sobre este modelo
       </button>
 
+      {/* Estatísticas do Cenário */}
+      <div style={{
+        position: 'absolute',
+        top: '230px',
+        left: '20px',
+        background: 'rgba(255, 255, 255, 0.95)',
+        padding: '15px',
+        borderRadius: '8px',
+        zIndex: 1000,
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+        maxWidth: '300px'
+      }}>
+        <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: '#333' }}>
+          Resumo do Cenário:
+        </h4>
+        {data && (
+          <div style={{ fontSize: '13px', color: '#666' }}>
+            <p style={{ margin: '5px 0' }}>
+              <strong>Pontos analisados:</strong> {data.features.length}
+            </p>
+            <p style={{ margin: '5px 0' }}>
+              <strong>Exposição total:</strong> R$ {
+                data.features.reduce((sum, f) => sum + f.properties.value, 0)
+                  .toLocaleString('pt-BR')
+              }
+            </p>
+            <p style={{ margin: '5px 0' }}>
+              <strong>Perda total esperada:</strong> R$ {
+                data.features.reduce((sum, f) => sum + f.properties.eai, 0)
+                  .toFixed(2).replace('.', ',')
+              }
+            </p>
+          </div>
+        )}
+      </div>
+
       {/* Legenda */}
       <div style={{
         position: 'absolute',
@@ -82,7 +201,7 @@ export default function App() {
         zIndex: 1000,
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}>
-        <h3 style={{ margin: '0 0 10px 0', fontSize: '16px' }}>Legenda</h3>
+        <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#333' }}>Legenda</h3>
         <div style={{ fontSize: '14px' }}>
           <div style={{ marginBottom: '5px' }}>
             <span style={{
@@ -151,9 +270,16 @@ export default function App() {
           
           <h3 style={{ color: '#444' }}>O que você está vendo:</h3>
           <ul style={{ color: '#555' }}>
-            <li><strong>Dados reais:</strong> Trajetória do Furacão Irma (2017) obtida do IBTrACS</li>
-            <li><strong>Dados fictícios:</strong> 5 pontos de exposição com valores de R$ 1-2 milhões</li>
+            <li><strong>Dados reais:</strong> Trajetórias de furacões históricos do IBTrACS</li>
+            <li><strong>Dados fictícios:</strong> Pontos de exposição com valores variados</li>
             <li><strong>Cálculo:</strong> Perda Anual Esperada (EAI) usando curvas de dano dos EUA</li>
+          </ul>
+
+          <h3 style={{ color: '#444' }}>Cenários disponíveis:</h3>
+          <ul style={{ color: '#555' }}>
+            <li><strong>Irma 2017:</strong> Devastou Caribe e Florida</li>
+            <li><strong>Matthew 2016:</strong> Impactou Haiti, Cuba e EUA</li>
+            <li><strong>Maria 2017:</strong> Destruiu Porto Rico</li>
           </ul>
 
           <h3 style={{ color: '#444' }}>Como funciona:</h3>
@@ -166,17 +292,17 @@ export default function App() {
           <h3 style={{ color: '#444' }}>Limitações atuais:</h3>
           <ul style={{ color: '#555' }}>
             <li>Exposição fictícia (não são ativos reais)</li>
-            <li>Apenas um evento histórico (Irma 2017)</li>
+            <li>Cenários pré-calculados (não dinâmicos)</li>
             <li>Curvas de dano genéricas dos EUA</li>
             <li>Sem ajuste para moeda ou inflação</li>
           </ul>
 
           <h3 style={{ color: '#444' }}>Próximas melhorias:</h3>
           <ul style={{ color: '#555' }}>
-            <li>Permitir upload de dados reais de exposição</li>
-            <li>Escolher diferentes eventos climáticos</li>
-            <li>Ajustar parâmetros de vulnerabilidade</li>
-            <li>Calcular em tempo real via API</li>
+            <li>Cálculo em tempo real via API</li>
+            <li>Upload de dados reais de exposição</li>
+            <li>Mais tipos de hazards (enchentes, secas)</li>
+            <li>Curvas de vulnerabilidade brasileiras</li>
           </ul>
 
           <p style={{ marginTop: '20px', fontSize: '14px', color: '#666' }}>
@@ -204,15 +330,16 @@ export default function App() {
 
       {/* Mapa */}
       <MapContainer
-        center={[20, -65]}
-        zoom={5}
+        key={selectedScenario} // força recriação quando muda cenário
+        center={currentScenario.center}
+        zoom={currentScenario.zoom}
         style={{ height: '100%', width: '100%' }}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="© OpenStreetMap | CLIMADA Engine"
         />
-        {data && (
+        {data && !loading && (
           <GeoJSON
             data={data}
             pointToLayer={(feature, latlng) => {
