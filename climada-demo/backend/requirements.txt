@@ -1,1 +1,4 @@
-
+fastapi
+uvicorn[standard]
+climada>=6.0.1
+pandas geopandas shapely pyproj
