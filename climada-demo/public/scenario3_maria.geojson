@@ -1,0 +1,15 @@
+{
+"type": "FeatureCollection",
+"name": "scenario3_maria",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "value": 10000000.0, "impf_TC": 1, "centr_TC": 17, "eai": 1266405.7339395413 }, "geometry": { "type": "Point", "coordinates": [ -66.5, 18.2 ] } },
+{ "type": "Feature", "properties": { "value": 15000000.0, "impf_TC": 1, "centr_TC": 11, "eai": 3676894.785179595 }, "geometry": { "type": "Point", "coordinates": [ -66.1, 18.4 ] } },
+{ "type": "Feature", "properties": { "value": 8000000.0, "impf_TC": 1, "centr_TC": 18, "eai": 2186078.2696198733 }, "geometry": { "type": "Point", "coordinates": [ -65.8, 18.1 ] } },
+{ "type": "Feature", "properties": { "value": 12000000.0, "impf_TC": 1, "centr_TC": 17, "eai": 1519686.8807274494 }, "geometry": { "type": "Point", "coordinates": [ -66.3, 18.0 ] } },
+{ "type": "Feature", "properties": { "value": 5000000.0, "impf_TC": 1, "centr_TC": 9, "eai": 494146.01613694098 }, "geometry": { "type": "Point", "coordinates": [ -67.1, 18.3 ] } },
+{ "type": "Feature", "properties": { "value": 7000000.0, "impf_TC": 1, "centr_TC": 16, "eai": 222461.8693558345 }, "geometry": { "type": "Point", "coordinates": [ -66.9, 17.9 ] } },
+{ "type": "Feature", "properties": { "value": 20000000.0, "impf_TC": 1, "centr_TC": 12, "eai": 1470484.9909749096 }, "geometry": { "type": "Point", "coordinates": [ -65.6, 18.5 ] } },
+{ "type": "Feature", "properties": { "value": 9000000.0, "impf_TC": 1, "centr_TC": 11, "eai": 2206136.8711077571 }, "geometry": { "type": "Point", "coordinates": [ -66.0, 18.3 ] } }
+]
+}

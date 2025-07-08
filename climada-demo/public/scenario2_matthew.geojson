@@ -1,0 +1,17 @@
+{
+"type": "FeatureCollection",
+"name": "scenario2_matthew",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "value": 5000000.0, "impf_TC": 1, "centr_TC": 123, "eai": 1170365.4477869549 }, "geometry": { "type": "Point", "coordinates": [ -74.5, 18.5 ] } },
+{ "type": "Feature", "properties": { "value": 3000000.0, "impf_TC": 1, "centr_TC": 108, "eai": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -73.5, 19.0 ] } },
+{ "type": "Feature", "properties": { "value": 2000000.0, "impf_TC": 1, "centr_TC": 108, "eai": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -72.5, 19.5 ] } },
+{ "type": "Feature", "properties": { "value": 1000000.0, "impf_TC": 1, "centr_TC": 93, "eai": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -71.5, 20.0 ] } },
+{ "type": "Feature", "properties": { "value": 4000000.0, "impf_TC": 1, "centr_TC": 122, "eai": 42560.292862711634 }, "geometry": { "type": "Point", "coordinates": [ -75.0, 18.0 ] } },
+{ "type": "Feature", "properties": { "value": 6000000.0, "impf_TC": 1, "centr_TC": 123, "eai": 1404438.5373443458 }, "geometry": { "type": "Point", "coordinates": [ -74.0, 18.5 ] } },
+{ "type": "Feature", "properties": { "value": 2000000.0, "impf_TC": 1, "centr_TC": 108, "eai": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -73.0, 19.0 ] } },
+{ "type": "Feature", "properties": { "value": 3000000.0, "impf_TC": 1, "centr_TC": 109, "eai": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -72.0, 19.5 ] } },
+{ "type": "Feature", "properties": { "value": 8000000.0, "impf_TC": 1, "centr_TC": 120, "eai": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -76.8, 18.0 ] } },
+{ "type": "Feature", "properties": { "value": 5000000.0, "impf_TC": 1, "centr_TC": 109, "eai": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -72.3, 18.5 ] } }
+]
+}
