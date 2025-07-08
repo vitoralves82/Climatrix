@@ -202,7 +202,7 @@ export default function App() {
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }}>
         <h3 style={{ margin: '0 0 10px 0', fontSize: '16px', color: '#333' }}>Legenda</h3>
-        <div style={{ fontSize: '14px' }}>
+        <div style={{ fontSize: '14px', color: '#555' }}>
           <div style={{ marginBottom: '5px' }}>
             <span style={{
               display: 'inline-block',
@@ -213,7 +213,7 @@ export default function App() {
               marginRight: '10px',
               verticalAlign: 'middle'
             }}></span>
-            Área com perda esperada
+            <span style={{ color: '#555' }}>Área com perda esperada</span>
           </div>
           <div>
             <span style={{
@@ -225,7 +225,7 @@ export default function App() {
               marginRight: '10px',
               verticalAlign: 'middle'
             }}></span>
-            Área sem perda esperada
+            <span style={{ color: '#555' }}>Área sem perda esperada</span>
           </div>
           <p style={{ margin: '10px 0 0 0', fontSize: '12px', color: '#666' }}>
             Tamanho do círculo = magnitude do risco
