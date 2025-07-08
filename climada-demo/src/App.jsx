@@ -12,7 +12,7 @@ export default function App() {
   // Definição dos cenários
   const scenarios = {
     scenario1: {
-      file: '/impact.geojson', // arquivo original
+      file: '/scenario1_irma.geojson', // arquivo original
       name: 'Furacão Irma (2017)',
       description: 'Caribe Oriental - 5 pontos de exposição',
       center: [20, -65],
