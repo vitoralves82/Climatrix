@@ -7,3 +7,8 @@ export default defineConfig({
   base: './',
 })
 
+
+export default defineConfig({
+  plugins: [react()],
+  base: './', // importante pro build funcionar na Vercel
+})
