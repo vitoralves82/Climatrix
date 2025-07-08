@@ -19,6 +19,22 @@ export default function App() {
       .catch(err => console.error('Falha no fetch:', err));
   }, []);
 
+  // Função para criar popup com informações
+  const onEachFeature = (feature, layer) => {
+    if (feature.properties) {
+      const props = feature.properties;
+      const popupContent = `
+        <div style="font-family: Arial, sans-serif;">
+          <h3 style="margin: 0 0 10px 0;">Informações do Ponto</h3>
+          <p><strong>Valor exposto:</strong> R$ ${props.value.toLocaleString('pt-BR')}</p>
+          <p><strong>Perda anual esperada:</strong> R$ ${props.eai.toFixed(2).replace('.', ',')}</p>
+          <p><strong>Coordenadas:</strong> ${feature.geometry.coordinates[1]}°, ${feature.geometry.coordinates[0]}°</p>
+        </div>
+      `;
+      layer.bindPopup(popupContent);
+    }
+  };
+
   return (
     <MapContainer
       center={[20, -65]}
@@ -30,20 +46,24 @@ export default function App() {
         attribution="© OSM"
       />
       {data && (
-  <GeoJSON
-    data={data}
-    pointToLayer={(feature, latlng) =>
-      L.circleMarker(latlng, {
-        radius: 8,
-        color: 'red',
-        fillColor: 'red',
-        fillOpacity: 0.7,
-        weight: 1,
-      })
-    }
-  />
-)}
+        <GeoJSON
+          data={data}
+          pointToLayer={(feature, latlng) => {
+            // Tamanho do círculo baseado no valor do EAI
+            const radius = feature.properties.eai > 0 ? 
+              Math.min(15, 5 + Math.log10(feature.properties.eai + 1)) : 5;
+            
+            return L.circleMarker(latlng, {
+              radius: radius,
+              color: 'red',
+              fillColor: feature.properties.eai > 0 ? 'red' : 'orange',
+              fillOpacity: 0.7,
+              weight: 2,
+            });
+          }}
+          onEachFeature={onEachFeature}
+        />
+      )}
     </MapContainer>
   );
-  
 }
