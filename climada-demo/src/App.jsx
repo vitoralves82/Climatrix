@@ -147,32 +147,32 @@ export default function App() {
             ✕
           </button>
           
-          <h2 style={{ marginTop: 0 }}>Sobre este Modelo</h2>
+          <h2 style={{ marginTop: 0, color: '#333' }}>Sobre este Modelo</h2>
           
-          <h3>O que você está vendo:</h3>
-          <ul>
+          <h3 style={{ color: '#444' }}>O que você está vendo:</h3>
+          <ul style={{ color: '#555' }}>
             <li><strong>Dados reais:</strong> Trajetória do Furacão Irma (2017) obtida do IBTrACS</li>
             <li><strong>Dados fictícios:</strong> 5 pontos de exposição com valores de R$ 1-2 milhões</li>
             <li><strong>Cálculo:</strong> Perda Anual Esperada (EAI) usando curvas de dano dos EUA</li>
           </ul>
 
-          <h3>Como funciona:</h3>
-          <ol>
+          <h3 style={{ color: '#444' }}>Como funciona:</h3>
+          <ol style={{ color: '#555' }}>
             <li>CLIMADA simula o campo de vento do furacão</li>
             <li>Aplica curvas de vulnerabilidade aos ativos expostos</li>
             <li>Calcula as perdas esperadas por localização</li>
           </ol>
 
-          <h3>Limitações atuais:</h3>
-          <ul>
+          <h3 style={{ color: '#444' }}>Limitações atuais:</h3>
+          <ul style={{ color: '#555' }}>
             <li>Exposição fictícia (não são ativos reais)</li>
             <li>Apenas um evento histórico (Irma 2017)</li>
             <li>Curvas de dano genéricas dos EUA</li>
             <li>Sem ajuste para moeda ou inflação</li>
           </ul>
 
-          <h3>Próximas melhorias:</h3>
-          <ul>
+          <h3 style={{ color: '#444' }}>Próximas melhorias:</h3>
+          <ul style={{ color: '#555' }}>
             <li>Permitir upload de dados reais de exposição</li>
             <li>Escolher diferentes eventos climáticos</li>
             <li>Ajustar parâmetros de vulnerabilidade</li>
