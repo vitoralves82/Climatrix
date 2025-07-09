@@ -8,7 +8,7 @@ export default function App() {
   const [showInfo, setShowInfo] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState('scenario1');
-
+  const API_BASE = 'https://climatrix-api.onrender.com';
   // Definição dos cenários
   const scenarios = {
     scenario1: {
@@ -39,17 +39,33 @@ export default function App() {
     setLoading(true);
     const scenario = scenarios[selectedScenario];
     
-    fetch(scenario.file)
+
+  useEffect(() => {
+    setLoading(true);
+  
+    const payload = {
+      hazard_type: 'TC',
+      event_id: scenario.eventId,   // ajuste conforme seu objeto "scenario"
+      exposure: [],                 // ← preencha depois
+      resolution: 1.0
+    };
+  
+    fetch(`${API_BASE}/api/calculate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
       .then(r => r.json())
       .then(d => {
-        setData(d);
+        setData(d);        // GeoJSON retornado pela API
         setLoading(false);
       })
       .catch(err => {
-        console.error('Falha ao carregar cenário:', err);
+        console.error('Falha ao calcular cenário:', err);
         setLoading(false);
       });
   }, [selectedScenario]);
+
 
   const onEachFeature = (feature, layer) => {
     if (feature.properties) {
