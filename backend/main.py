@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from climada.hazard.tc_tracks import TCTracks
-from climada.entity import Impact
+from climada.engine import Impact
 
 app = FastAPI()
 
