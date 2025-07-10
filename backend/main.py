@@ -58,14 +58,17 @@ def build_tc_hazard(h: HazardIn, locs):
         tc = tc.apply_climate_scenario_knu(rcp_scenario=85)
     return tc
 
-def build_exposures(exps: List[ExposureIn]):
-    df = pd.DataFrame([e.dict() for e in exps]).rename(
-        columns={"lat":"latitude", "lon":"longitude", "value_usd":"value"}
-    )
-    exp = Exposures(df)
-    exp.set_geometry_points()
-    exp.gdf.rename(columns={"lon": "longitude", "lat": "latitude"}, inplace=True)
-    exp.gdf["impf_TC"] = 1
+def build_exposures(exp_list: list[ExposureIn]) -> Exposures:
+    """Recebe a lista de ativos do usuário e devolve um objeto Climada Exposures."""
+    exp = Exposures()
+    # preencher listas simples
+    exp.lon  = [e.lon  for e in exp_list]
+    exp.lat  = [e.lat  for e in exp_list]
+    exp.value= [e.value_usd for e in exp_list]
+    exp.id   = [e.id   for e in exp_list]
+    exp.category = [e.type for e in exp_list]
+    # gerar GeoSeries geometry
+    exp.set_lat_lon()
     return exp
 
 # ----- rota principal -----
