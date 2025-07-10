@@ -64,6 +64,7 @@ def build_exposures(exps: List[ExposureIn]):
     )
     exp = Exposures(df)
     exp.set_geometry_points()
+    exp.gdf = exp.gdf.rename(columns={"lon": "longitude", "lat": "latitude"})
     exp.gdf["impf_TC"] = 1
     return exp
 
