@@ -1,8 +1,18 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware          # ← novo
 from pydantic import BaseModel
 
 app = FastAPI()
 
+# ── CORS: libera chamadas do Vercel ───────────────────────────
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://climatrix.vercel.app"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ── Tipos ------------------------------------------------------
 class Point(BaseModel):
     lat: float
     lon: float
@@ -14,6 +24,7 @@ class Req(BaseModel):
     exposure: list[Point]
     resolution: float = 1.0
 
+# ── Rotas ──────────────────────────────────────────────────────
 @app.get("/")
 def root():
     return {"status": "ok"}
@@ -26,7 +37,7 @@ def calc(req: Req):
     feats = [
         {
             "type": "Feature",
-            "properties": {"eai": pt.value * 0.1},
+            "properties": {"value": pt.value, "eai": pt.value * 0.1},
             "geometry": {"type": "Point", "coordinates": [pt.lon, pt.lat]},
         }
         for pt in req.exposure
