@@ -13,7 +13,7 @@ class Req(BaseModel):
 
 @app.post("/api/calculate")
 def calc(req: Req):
-    track = TCTracks.from_ibtracs_netcdf(event_id=req.event_id)
+    track = TCTracks.from_ibtracs_netcdf(storm_id=req.event_id)
     # TODO: construir exposição e cálculo
     imp = Impact()  # placeholder
     return {"msg": "ok"}  # substitua pelo GeoJSON
