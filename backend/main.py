@@ -8,6 +8,8 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://climatrix.vercel.app"],
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_origins=["http://localhost:5173"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
