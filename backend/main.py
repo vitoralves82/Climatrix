@@ -5,11 +5,10 @@ from climada.hazard import TCTracks, TropCyclone, Centroids
 from climada.entity import Exposures, ImpactFuncSet, ImpfTropCyclone
 from climada.engine import Impact
 import pandas as pd
-import numpy as np
 
 app = FastAPI()
 
-# ---------- Esquemas de entrada ----------
+# ----- esquemas de entrada -----
 class ExposureIn(BaseModel):
     id: str
     type: str
@@ -27,14 +26,14 @@ class HazardIn(BaseModel):
     track_angle: float
     central_pressure: float
     duration_hours: int = 4
-    climate_scenario: str = "CURRENT"  # "RCP45" | "RCP85"
+    climate_scenario: str = "CURRENT"
 
 class CalcRequest(BaseModel):
     hazard: HazardIn
     exposures: List[ExposureIn]
 
-# ---------- Funções auxiliares ----------
-def build_tc_hazard(h: HazardIn) -> TropCyclone:
+# ----- funções auxiliares -----
+def build_tc_hazard(h: HazardIn, locs):
     tr = TCTracks()
     track = tr.generate_synthetic_track(
         basin='NA',
@@ -46,62 +45,49 @@ def build_tc_hazard(h: HazardIn) -> TropCyclone:
         track_speed=h.translation_speed,
         duration=h.duration_hours
     )
-
-    # grade grossa só na região em torno dos ativos
-    cent = Centroids.from_exposures_locs([(e.lon, e.lat) for e in req.exposures], res=0.25)
+    cent = Centroids.from_exposures_locs(locs, res=0.25)
     tc = TropCyclone.from_tracks(tr, centroids=cent)
-
     if h.climate_scenario == "RCP45":
-        tc = tc.apply_climate_scenario_knu(ref_year=2050, rcp_scenario=45)
+        tc = tc.apply_climate_scenario_knu(rcp_scenario=45)
     elif h.climate_scenario == "RCP85":
-        tc = tc.apply_climate_scenario_knu(ref_year=2050, rcp_scenario=85)
-
+        tc = tc.apply_climate_scenario_knu(rcp_scenario=85)
     return tc
 
-def build_exposures(exps: List[ExposureIn]) -> Exposures:
-    df = pd.DataFrame([e.dict() for e in exps])
-    exp = Exposures(df.rename(columns={
-        "lat": "latitude",
-        "lon": "longitude",
-        "value_usd": "value"
-    }))
+def build_exposures(exps: List[ExposureIn]):
+    df = pd.DataFrame([e.dict() for e in exps]).rename(
+        columns={"lat":"latitude", "lon":"longitude", "value_usd":"value"}
+    )
+    exp = Exposures(df)
     exp.set_geometry_points()
     exp.gdf["impf_TC"] = 1
     return exp
 
-# ---------- Rota principal ----------
+# ----- rota principal -----
 @app.post("/api/calculate")
 def calc(req: CalcRequest):
-    # 1. hazard
-    tc_haz = build_tc_hazard(req.hazard)
-
-    # 2. exposures
     exp = build_exposures(req.exposures)
+    tc  = build_tc_hazard(req.hazard, list(zip(exp.gdf.longitude, exp.gdf.latitude)))
 
-    # 3. impact functions (você pode calibrar por tipo)
     impf = ImpactFuncSet()
     base_if = ImpfTropCyclone.from_emanuel_usa()
     base_if.id = 1
     impf.append(base_if)
 
-    # 4. impacto
     imp = Impact()
-    imp.calc(exp, impf, tc_haz)
+    imp.calc(exp, impf, tc)
 
-    # 5. métricas + resultados por ativo
-    response = {
+    return {
         "aal_usd": float(imp.aai_agg),
         "pml_200_usd": float(imp.calc_pml(return_periods=(200))[0]),
         "assets": [
             {
-                "id": row["id"],
-                "type": row["type"],
-                "lat": row["latitude"],
-                "lon": row["longitude"],
-                "value_usd": row["value"],
-                "damage_pct": float(imp.eai_exp[i] / row["value"] * 100) if row["value"] > 0 else 0
+              "id": row.id,
+              "type": row.type,
+              "lat": row.latitude,
+              "lon": row.longitude,
+              "value_usd": row.value,
+              "damage_pct": round(float(imp.eai_exp[i]/row.value*100),2)
             }
             for i, row in exp.gdf.iterrows()
         ]
     }
-    return response
