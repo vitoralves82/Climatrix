@@ -2,6 +2,15 @@ import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import L from 'leaflet';
+from fastapi.middleware.cors import CORSMiddleware 
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://climatrix.vercel.app"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 const API_BASE = 'https://climatrix-api.onrender.com';
 
