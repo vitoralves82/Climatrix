@@ -1,19 +1,19 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from climada.hazard.tc_tracks import TCTracks
-from climada.engine import Impact
-
-app = FastAPI()
-
-class Req(BaseModel):
-    hazard_type: str
-    event_id: str
-    exposure: list
-    resolution: float = 1.0
+import json
+from fastapi import HTTPException
 
 @app.post("/api/calculate")
 def calc(req: Req):
-    track = TCTracks.from_ibtracs_netcdf(storm_id=req.event_id)
-    # TODO: construir exposição e cálculo
-    imp = Impact()  # placeholder
-    return {"msg": "ok"}  # substitua pelo GeoJSON
+    # validação mínima
+    if not req.exposure:
+        raise HTTPException(status_code=400, detail="exposure vazio")
+
+    # GeoJSON de teste: devolve cada ponto da exposição como Feature
+    features = [
+        {
+            "type": "Feature",
+            "properties": {"eai": pt["value"] * 0.1},
+            "geometry": {"type": "Point", "coordinates": [pt["lon"], pt["lat"]]}
+        }
+        for pt in req.exposure
+    ]
+    return json.loads(json.dumps({"type": "FeatureCollection", "features": features}))
