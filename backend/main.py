@@ -6,6 +6,10 @@ from climada.entity import Exposures, ImpactFuncSet, ImpfTropCyclone
 from climada.engine import Impact
 import pandas as pd
 
+@app.get("/")
+def root():
+    return {"status": "ok"}
+
 app = FastAPI()
 
 # ----- esquemas de entrada -----
