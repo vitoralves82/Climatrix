@@ -2,15 +2,6 @@ import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useEffect, useState } from 'react';
 import L from 'leaflet';
-from fastapi.middleware.cors import CORSMiddleware;
-
-app = FastAPI()
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://climatrix.vercel.app"],
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 const API_BASE = 'https://climatrix-api.onrender.com';
 
@@ -20,7 +11,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState('scenario1');
 
-  // ── Cenários disponíveis ──────────────────────────────────────
+  // ── Cenários ─────────────────────────────────────────────────
   const scenarios = {
     scenario1: {
       file: '/scenario1_irma.geojson',
@@ -45,24 +36,24 @@ export default function App() {
     }
   };
 
-  // ── Carrega dados quando o cenário muda ───────────────────────
+  // ── Carrega GeoJSON local → chama API ────────────────────────
   useEffect(() => {
     const loadAndCalc = async () => {
       setLoading(true);
       setData(null);
 
       try {
-        // 1) baixa o GeoJSON local
+        // 1) GeoJSON local
         const geo = await (await fetch(scenarios[selectedScenario].file)).json();
 
-        // 2) transforma em exposure [{lat, lon, value}]
+        // 2) Converte em exposure
         const exposure = geo.features.map(f => ({
           lat: f.geometry.coordinates[1],
           lon: f.geometry.coordinates[0],
-          value: f.properties?.value ?? 1_000_000  // valor default se faltar
+          value: f.properties?.value ?? 1_000_000
         }));
 
-        // 3) chama API (stub devolve GeoJSON calculado)
+        // 3) POST na API
         const payload = {
           hazard_type: 'TC',
           event_id: 'dummy',
@@ -77,7 +68,6 @@ export default function App() {
         });
 
         if (!res.ok) throw new Error(`API ${res.status}`);
-
         const geoOut = await res.json();
         setData(geoOut);
       } catch (err) {
@@ -90,22 +80,22 @@ export default function App() {
     loadAndCalc();
   }, [selectedScenario]);
 
-  // ── Popup de cada ponto ───────────────────────────────────────
+  // ── Popup de cada ponto ──────────────────────────────────────
   const onEachFeature = (feature, layer) => {
     if (!feature.properties) return;
     const p = feature.properties;
     layer.bindPopup(`
       <div style="font-family: Arial">
         <h4 style="margin-top:0">Risco</h4>
-        Valor: R$ ${p.value.toLocaleString('pt-BR')}<br/>
-        EAI: R$ ${p.eai.toFixed(2).replace('.', ',')}
+        Valor: R$ ${p.value?.toLocaleString('pt-BR') ?? '-'}<br/>
+        EAI: R$ ${(p.eai ?? 0).toFixed(2).replace('.', ',')}
       </div>
     `);
   };
 
   const current = scenarios[selectedScenario];
 
-  // ── UI / Mapa ─────────────────────────────────────────────────
+  // ── UI / Mapa ────────────────────────────────────────────────
   return (
     <div style={{ height: '100vh', width: '100%', position: 'relative' }}>
       {/* cabeçalho */}
@@ -116,7 +106,7 @@ export default function App() {
         </h1>
       </div>
 
-      {/* seletor de cenário */}
+      {/* seletor */}
       <div style={{
         position: 'absolute', top: 80, left: 20, zIndex: 1000,
         background: 'rgba(255,255,255,0.95)', padding: 20, borderRadius: 8, maxWidth: 280
@@ -172,19 +162,20 @@ export default function App() {
         )}
       </MapContainer>
 
-      {/* modal simples */}
+      {/* modal Sobre */}
       {showInfo && (
         <>
-          <div style={{
-            position: 'absolute', inset: 0, background: 'rgba(0,0,0,.5)', zIndex: 1100
-          }} onClick={() => setShowInfo(false)} />
+          <div
+            style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,.5)', zIndex: 1100 }}
+            onClick={() => setShowInfo(false)}
+          />
           <div style={{
             position: 'absolute', top: '50%', left: '50%',
             transform: 'translate(-50%, -50%)', background: '#fff',
             padding: 30, borderRadius: 8, zIndex: 1200, maxWidth: 500
           }}>
             <h2>Protótipo Climatrix</h2>
-            <p>Atualmente devolvendo GeoJSON mock da API.</p>
+            <p>Back-end responde GeoJSON stub para teste.</p>
             <button onClick={() => setShowInfo(false)}>Fechar</button>
           </div>
         </>
