@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Literal
 from climada.hazard import TCTracks, TropCyclone, Centroids
 from climada.entity import Exposures, ImpactFuncSet, ImpfTropCyclone
 from climada.engine import Impact
@@ -17,7 +17,7 @@ class ExposureIn(BaseModel):
     value_usd: float
 
 class HazardIn(BaseModel):
-    type: str = Field("TC", const=True)
+    type: Literal["TC"] = "TC"
     start_lat: float
     start_lon: float
     wind_speed: float
