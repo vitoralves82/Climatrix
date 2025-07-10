@@ -1,0 +1,5 @@
+{
+  "name": "Climatrix - Climate Risk Pricing",
+  "description": "An interactive map application to visualize and price climate risks based on historical hurricane scenarios. This tool demonstrates the potential financial impact of climate events on exposed assets.",
+  "requestFramePermissions": []
+}
