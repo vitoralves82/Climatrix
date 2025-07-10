@@ -73,11 +73,12 @@ def build_exposures(exp_list: list[ExposureIn]) -> Exposures:
 
 # ----- rota principal -----
 @app.post("/api/calculate")
+
 def calc(req: CalcRequest):
     exp = build_exposures(req.exposures)
     tc  = build_tc_hazard(
         req.hazard, 
-        list(zip(exp.gdf["longitude"], exp.gdf["latitude"])))
+        list(zip(exp.lon, exp.lat)))
 
     impf = ImpactFuncSet()
     base_if = ImpfTropCyclone.from_emanuel_usa()
