@@ -56,8 +56,8 @@ const climaticScenarios = {
 };
 
 interface ControlsMenuProps {
-    isOpen: boolean;
-    onClose: () => void;
+    onNavigateToMap: () => void;
+    onNavigateToResults: () => void;
     scenarios: Scenario[];
     selectedScenarioId: string;
     onScenarioChange: (id: string) => void;
@@ -67,13 +67,6 @@ interface ControlsMenuProps {
     onAddAsset: (asset: CustomAsset) => void;
     onRemoveAsset: (id: number) => void;
 }
-
-const CloseIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"></line>
-        <line x1="6" y1="6" x2="18" y2="18"></line>
-    </svg>
-);
 
 const TrashIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -92,23 +85,23 @@ const DatabaseIcon = () => (
     </svg>
 );
 
-const Panel: React.FC<{ label: string; children: React.ReactNode, className?: string }> = ({ label, children, className }) => (
-    <div className={`mb-4 ${className}`}>
-        <label className="text-sm text-emerald-300 block mb-2 font-semibold">{label}</label>
+const Panel: React.FC<{ title: string; children: React.ReactNode, className?: string }> = ({ title, children, className }) => (
+    <div className={`bg-slate-900/80 border border-slate-800 p-6 rounded-xl shadow-lg ${className}`}>
+        <h3 className="text-lg font-bold text-white mb-4">{title}</h3>
         {children}
     </div>
 );
 
 const SkeletonLoader = () => (
     <div className="animate-pulse">
-        <div className="h-3 bg-gray-600 rounded w-3/4 mb-2"></div>
-        <div className="h-3 bg-gray-600 rounded w-1/2"></div>
+        <div className="h-3 bg-slate-700 rounded w-3/4 mb-2"></div>
+        <div className="h-3 bg-slate-700 rounded w-1/2"></div>
     </div>
 );
 
 export default function ControlsMenu({ 
-    isOpen, 
-    onClose,
+    onNavigateToMap, 
+    onNavigateToResults,
     scenarios,
     selectedScenarioId,
     onScenarioChange,
@@ -192,196 +185,167 @@ export default function ControlsMenu({
         }
     };
 
-    const inputClass = "w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 text-white text-sm focus:ring-sky-500 focus:border-sky-500 placeholder-gray-400";
+    const inputClass = "w-full bg-slate-800/50 border border-slate-700 rounded-md px-3 py-2 text-white text-sm focus:ring-sky-500 focus:border-sky-500 placeholder-slate-400/50";
     const errorInputClass = "border-red-500 focus:border-red-500 focus:ring-red-500";
 
     return (
-      <>
-        <div 
-            className={`fixed inset-0 bg-black/60 z-[1500] transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
-            onClick={onClose} aria-hidden="true"
-        ></div>
-        <div 
-            className={`fixed top-0 left-0 h-full w-80 bg-gray-800 text-white shadow-2xl z-[1600] transform transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
-            role="dialog" aria-modal="true" aria-labelledby="controls-menu-title"
-        >
-            <div className="flex justify-between items-center p-4 border-b border-gray-700">
-                <h2 id="controls-menu-title" className="text-lg font-semibold">Controles do Modelo</h2>
-                <button onClick={onClose} className="text-gray-400 hover:text-white hover:bg-gray-700 rounded-full p-1 transition-colors" aria-label="Close menu">
-                    <CloseIcon />
-                </button>
-            </div>
+      <div className="min-h-screen w-screen bg-slate-950 text-white flex flex-col font-sans">
+          <header className="bg-slate-900 text-white p-4 shadow-lg z-10 border-b border-slate-800 flex-shrink-0">
+              <div className="container mx-auto flex justify-between items-center">
+                  <div>
+                      <h1 className="text-2xl font-bold tracking-tight text-white">Climatrix</h1>
+                      <p className="text-sm text-slate-300">Controles do Modelo</p>
+                  </div>
+                  <nav className="flex items-center gap-2 sm:gap-4">
+                      <button onClick={onNavigateToMap} className="text-base sm:text-lg font-semibold text-sky-300 hover:text-white transition-colors">Mapa</button>
+                      <button onClick={onNavigateToResults} className="text-base sm:text-lg font-semibold text-sky-300 hover:text-white transition-colors">Resultados</button>
+                  </nav>
+              </div>
+          </header>
 
-            <div className="p-4 overflow-y-auto h-[calc(100vh-65px)]">
-                <Panel label="Hazard">
-                    <select value={selectedHazard} onChange={handleHazardChange} className={inputClass}>
-                        {hazardOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                    </select>
-                </Panel>
-                
-                <Panel label="Condições do Hazard" className="bg-gray-900/50 p-3 rounded-lg border border-gray-700">
-                    <div className="space-y-3">
-                        <div>
-                            <label className="text-xs text-gray-400 mb-1 block">Units</label>
-                            <select value={selectedUnit} onChange={(e) => setSelectedUnit(e.target.value)} className={inputClass}>
-                                {(unitsMap[selectedHazard] || []).map(unit => (
-                                    <option key={unit} value={unit}>{unit}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div>
-                             <label className="text-xs text-gray-400 mb-1 block">Centroids</label>
+          <main className="flex-grow p-4 sm:p-8 overflow-y-auto">
+              <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+                  
+                  <div className="space-y-8">
+                      <Panel title="Configuração do Hazard">
+                          <div className="space-y-4">
+                              <div>
+                                  <label className="text-sm text-slate-300 block mb-2 font-semibold">Hazard</label>
+                                  <select value={selectedHazard} onChange={handleHazardChange} className={inputClass}>
+                                      {hazardOptions.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                                  </select>
+                              </div>
+                              <div>
+                                  <label className="text-sm text-slate-300 block mb-2 font-semibold">Units</label>
+                                  <select value={selectedUnit} onChange={(e) => setSelectedUnit(e.target.value)} className={inputClass}>
+                                      {(unitsMap[selectedHazard] || []).map(unit => (
+                                          <option key={unit} value={unit}>{unit}</option>
+                                      ))}
+                                  </select>
+                              </div>
+                              <div>
+                                <label className="text-sm text-slate-300 block mb-2 font-semibold">Cenário Climático</label>
+                                <select value={selectedClimaticScenario} onChange={(e) => setSelectedClimaticScenario(e.target.value)} className={inputClass}>
+                                    {Object.entries(climaticScenarios).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
+                                </select>
+                              </div>
+                          </div>
+                      </Panel>
+
+                      <Panel title="Parâmetros de Simulação">
+                         <div className="space-y-4">
+                            <div>
+                                <label className="text-sm text-slate-400 mb-1 block">Frequência</label>
+                                <div className="flex gap-2">
+                                    <input type="number" placeholder="Valor" value={frequencyValue} onChange={(e) => setFrequencyValue(e.target.value)} className={inputClass} />
+                                    <select value={frequencyUnit} onChange={(e) => setFrequencyUnit(e.target.value)} className={inputClass}>
+                                        {frequencyUnits.map(unit => (<option key={unit} value={unit}>{unit}</option>))}
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-sm text-slate-400 mb-1 block">Intensidade</label>
+                                <div className="flex gap-2">
+                                    <input type="number" placeholder="Valor" value={intensityValue} onChange={(e) => setIntensityValue(e.target.value)} className={inputClass} />
+                                    <select value={intensityUnit} onChange={(e) => setIntensityUnit(e.target.value)} className={inputClass}>
+                                        {(intensityUnitsMap[selectedHazard] || []).map(unit => (<option key={unit} value={unit}>{unit}</option>))}
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-sm text-slate-400 mb-1 block">Fração</label>
+                                <div className="flex gap-2">
+                                    <input type="number" placeholder="Valor" value={fractionValue} onChange={(e) => setFractionValue(e.target.value)} className={inputClass} />
+                                    <select value={fractionUnit} onChange={(e) => setFractionUnit(e.target.value)} className={inputClass}>
+                                        {fractionUnits.map(unit => (<option key={unit} value={unit}>{unit}</option>))}
+                                    </select>
+                                </div>
+                            </div>
+                         </div>
+                      </Panel>
+                      <Panel title="Parâmetros Adicionais (Opcional)">
+                        <div className="space-y-4">
                             <input type="text" placeholder="Centroids" value={centroids} onChange={(e) => setCentroids(e.target.value)} className={inputClass} />
-                        </div>
-                        <div>
-                             <label className="text-xs text-gray-400 mb-1 block">ID do evento</label>
                             <input type="text" placeholder="ID do evento" value={eventId} onChange={(e) => setEventId(e.target.value)} className={inputClass} />
                         </div>
-                        <div>
-                            <label className="text-xs text-gray-400 mb-1 block">Frequência</label>
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    placeholder="Valor"
-                                    value={frequencyValue}
-                                    onChange={(e) => setFrequencyValue(e.target.value)}
-                                    className={inputClass}
-                                />
-                                <select
-                                    value={frequencyUnit}
-                                    onChange={(e) => setFrequencyUnit(e.target.value)}
-                                    className={inputClass}
-                                >
-                                    {frequencyUnits.map(unit => (
-                                        <option key={unit} value={unit}>{unit}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label className="text-xs text-gray-400 mb-1 block">Intensidade</label>
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    placeholder="Valor"
-                                    value={intensityValue}
-                                    onChange={(e) => setIntensityValue(e.target.value)}
-                                    className={inputClass}
-                                />
-                                <select
-                                    value={intensityUnit}
-                                    onChange={(e) => setIntensityUnit(e.target.value)}
-                                    className={inputClass}
-                                >
-                                    {(intensityUnitsMap[selectedHazard] || []).map(unit => (
-                                        <option key={unit} value={unit}>{unit}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label className="text-xs text-gray-400 mb-1 block">Fração</label>
-                            <div className="flex gap-2">
-                                <input
-                                    type="number"
-                                    placeholder="Valor"
-                                    value={fractionValue}
-                                    onChange={(e) => setFractionValue(e.target.value)}
-                                    className={inputClass}
-                                />
-                                <select
-                                    value={fractionUnit}
-                                    onChange={(e) => setFractionUnit(e.target.value)}
-                                    className={inputClass}
-                                >
-                                    {fractionUnits.map(unit => (
-                                        <option key={unit} value={unit}>{unit}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </Panel>
+                      </Panel>
+                  </div>
+                  
+                  <div className="space-y-8">
+                      <Panel title="Cenários Pré-definidos">
+                          <select id="scenario-select" value={selectedScenarioId} onChange={(e) => onScenarioChange(e.target.value)} disabled={loading} className={`${inputClass} mb-2 disabled:opacity-50`}>
+                              {scenarios.map((scenario) => (
+                                  <option key={scenario.id} value={scenario.id}>{scenario.name}</option>
+                              ))}
+                          </select>
+                          <div className="text-xs text-slate-400 h-8 pt-1">
+                              {loading ? <SkeletonLoader /> : <p>{description}</p>}
+                          </div>
+                      </Panel>
 
-                <Panel label="Selecione o Cenário Pré-definido">
-                    <select id="scenario-select" value={selectedScenarioId} onChange={(e) => onScenarioChange(e.target.value)} disabled={loading} className={`${inputClass} mb-2 disabled:opacity-50`}>
-                        {scenarios.map((scenario) => (
-                            <option key={scenario.id} value={scenario.id}>{scenario.name}</option>
-                        ))}
-                    </select>
-                    <div className="text-xs text-gray-400 h-8 pt-1">
-                        {loading ? <SkeletonLoader /> : <p>{description}</p>}
-                    </div>
-                </Panel>
-
-                <Panel label="Gerenciamento de Dados">
-                    <button className="w-full flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200">
-                        <DatabaseIcon />
-                        Importar Base de Dados
-                    </button>
-                </Panel>
-
-                <Panel label="Ativos">
-                    <form onSubmit={handleAddAsset} className="space-y-3">
-                        <input type="text" placeholder="Nome do Ativo" value={assetName} onChange={e => setAssetName(e.target.value)} className={inputClass} required />
-                        <div className="flex gap-2">
-                            <div className="w-full">
-                                <input type="number" step="any" placeholder="Latitude (-90 to 90)" value={assetLat} onChange={e => {setAssetLat(e.target.value); setAssetLatError('')}} className={`${inputClass} ${assetLatError ? errorInputClass : ''}`} required />
-                                {assetLatError && <p className="text-xs text-red-400 mt-1">{assetLatError}</p>}
-                            </div>
-                            <div className="w-full">
-                                <input type="number" step="any" placeholder="Longitude (-180 to 180)" value={assetLon} onChange={e => {setAssetLon(e.target.value); setAssetLonError('')}} className={`${inputClass} ${assetLonError ? errorInputClass : ''}`} required />
-                                {assetLonError && <p className="text-xs text-red-400 mt-1">{assetLonError}</p>}
-                            </div>
-                        </div>
-                        <input type="number" step="any" placeholder="Altitude (m) (Opcional)" value={assetAltitude} onChange={e => setAssetAltitude(e.target.value)} className={inputClass} />
-                        <input type="number" placeholder="Valor ($)" value={assetValue} onChange={e => setAssetValue(e.target.value)} className={inputClass} required />
-                        <select value={assetRiskType} onChange={e => setAssetRiskType(e.target.value)} className={inputClass}>
-                            <option value="RF1">Risco RF1</option>
-                            <option value="RF2">Risco RF2</option>
-                        </select>
-                        <button type="submit" className="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200">
-                            Adicionar Ativo
-                        </button>
-                    </form>
-                    <div className="mt-4">
-                        {customAssets.length > 0 && <h4 className="text-sm text-gray-300 mb-2">Ativos Adicionados:</h4>}
-                        <ul className="space-y-2 max-h-40 overflow-y-auto pr-2">
-                            {customAssets.map(asset => (
-                                <li key={asset.id} className="flex justify-between items-start bg-gray-700 p-2 rounded-md text-sm">
-                                    <div className="flex-grow">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <p className="font-semibold text-white break-words">{asset.name}</p>
-                                            <span className="bg-emerald-900 text-emerald-200 text-xs font-medium px-2 py-0.5 rounded-full">{asset.riskType}</span>
-                                        </div>
-                                        <p className="text-xs text-gray-400">
-                                            {`Lat: ${asset.lat.toFixed(4)}, Lon: ${asset.lon.toFixed(4)}`}
-                                        </p>
-                                        {asset.altitude !== undefined && (
-                                            <p className="text-xs text-gray-400">
-                                                {`Altitude: ${asset.altitude} m`}
-                                            </p>
-                                        )}
-                                        <p className="text-xs text-gray-400">
-                                            Valor: {asset.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}
-                                        </p>
-                                    </div>
-                                    <button onClick={() => onRemoveAsset(asset.id)} className="text-red-400 hover:text-red-300 p-1 ml-2 flex-shrink-0">
-                                        <TrashIcon />
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </Panel>
-
-                <Panel label="Cenário Climático">
-                    <select value={selectedClimaticScenario} onChange={(e) => setSelectedClimaticScenario(e.target.value)} className={inputClass}>
-                        {Object.entries(climaticScenarios).map(([key, value]) => <option key={key} value={key}>{value}</option>)}
-                    </select>
-                </Panel>
-            </div>
-        </div>
-      </>
+                      <Panel title="Ativos e Exposição">
+                          <div className="mb-6">
+                            <button className="w-full flex items-center justify-center bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200">
+                                <DatabaseIcon />
+                                Importar Base de Dados
+                            </button>
+                          </div>
+                          <h4 className="text-md font-semibold text-white mb-3">Adicionar Ativo Manualmente</h4>
+                          <form onSubmit={handleAddAsset} className="space-y-3">
+                              <input type="text" placeholder="Nome do Ativo" value={assetName} onChange={e => setAssetName(e.target.value)} className={inputClass} required />
+                              <div className="flex gap-2">
+                                  <div className="w-full">
+                                      <input type="number" step="any" placeholder="Latitude (-90 to 90)" value={assetLat} onChange={e => {setAssetLat(e.target.value); setAssetLatError('')}} className={`${inputClass} ${assetLatError ? errorInputClass : ''}`} required />
+                                      {assetLatError && <p className="text-xs text-red-400 mt-1">{assetLatError}</p>}
+                                  </div>
+                                  <div className="w-full">
+                                      <input type="number" step="any" placeholder="Longitude (-180 to 180)" value={assetLon} onChange={e => {setAssetLon(e.target.value); setAssetLonError('')}} className={`${inputClass} ${assetLonError ? errorInputClass : ''}`} required />
+                                      {assetLonError && <p className="text-xs text-red-400 mt-1">{assetLonError}</p>}
+                                  </div>
+                              </div>
+                              <input type="number" step="any" placeholder="Altitude (m) (Opcional)" value={assetAltitude} onChange={e => setAssetAltitude(e.target.value)} className={inputClass} />
+                              <input type="number" placeholder="Valor ($)" value={assetValue} onChange={e => setAssetValue(e.target.value)} className={inputClass} required />
+                              <select value={assetRiskType} onChange={e => setAssetRiskType(e.target.value)} className={inputClass}>
+                                  <option value="RF1">Risco RF1</option>
+                                  <option value="RF2">Risco RF2</option>
+                              </select>
+                              <button type="submit" className="w-full bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200">
+                                  Adicionar Ativo
+                              </button>
+                          </form>
+                          <div className="mt-4">
+                              {customAssets.length > 0 && <h4 className="text-sm text-slate-300 mb-2">Ativos Adicionados:</h4>}
+                              <ul className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                                  {customAssets.map(asset => (
+                                      <li key={asset.id} className="flex justify-between items-start bg-slate-800/60 p-2 rounded-md text-sm">
+                                          <div className="flex-grow">
+                                              <div className="flex items-center gap-2 mb-1">
+                                                  <p className="font-semibold text-white break-words">{asset.name}</p>
+                                                  <span className="bg-slate-900 text-sky-200 text-xs font-medium px-2 py-0.5 rounded-full">{asset.riskType}</span>
+                                              </div>
+                                              <p className="text-xs text-slate-400">
+                                                  {`Lat: ${asset.lat.toFixed(4)}, Lon: ${asset.lon.toFixed(4)}`}
+                                              </p>
+                                              {asset.altitude !== undefined && (
+                                                  <p className="text-xs text-slate-400">
+                                                      {`Altitude: ${asset.altitude} m`}
+                                                  </p>
+                                              )}
+                                              <p className="text-xs text-slate-400">
+                                                  Valor: {asset.value.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}
+                                              </p>
+                                          </div>
+                                          <button onClick={() => onRemoveAsset(asset.id)} className="text-red-400 hover:text-red-300 p-1 ml-2 flex-shrink-0">
+                                              <TrashIcon />
+                                          </button>
+                                      </li>
+                                  ))}
+                              </ul>
+                          </div>
+                      </Panel>
+                  </div>
+              </div>
+          </main>
+      </div>
     );
 }

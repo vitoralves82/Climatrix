@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { ResponsiveContainer, BarChart, PieChart, Pie, Cell, Legend, Bar, Tooltip, XAxis, YAxis } from 'recharts';
 import type { Scenario } from '../types';
@@ -45,7 +46,7 @@ const PrintIcon = () => (
 
 // --- HELPER COMPONENTS ---
 const StatCard: React.FC<{ title: string; value: string; description: string; valueColor?: string }> = ({ title, value, description, valueColor = 'text-white' }) => (
-    <div className="bg-gray-700/50 p-4 rounded-lg"><h3 className="text-sm text-gray-400 font-semibold uppercase tracking-wide">{title}</h3><p className={`text-2xl font-bold mt-1 ${valueColor}`}>{value}</p><p className="text-xs text-gray-400 mt-1">{description}</p></div>
+    <div className="bg-slate-700/50 p-4 rounded-lg"><h3 className="text-sm text-slate-400 font-semibold uppercase tracking-wide">{title}</h3><p className={`text-2xl font-bold mt-1 ${valueColor}`}>{value}</p><p className="text-xs text-slate-400 mt-1">{description}</p></div>
 );
 
 const getStatusColor = (status: string) => {
@@ -54,21 +55,21 @@ const getStatusColor = (status: string) => {
         case 'Dano Moderado': return 'bg-yellow-900/50 text-yellow-300 ring-1 ring-inset ring-yellow-400/30';
         case 'Dano Leve': return 'bg-lime-900/50 text-lime-300 ring-1 ring-inset ring-lime-400/30';
         case 'Dano Mínimo': return 'bg-green-900/50 text-green-300 ring-1 ring-inset ring-green-400/30';
-        default: return 'bg-gray-700 text-gray-300 ring-1 ring-inset ring-gray-600';
+        default: return 'bg-slate-700 text-slate-300 ring-1 ring-inset ring-slate-600';
     }
 };
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => ( <span className={`px-2 py-0.5 text-xs font-medium rounded-full whitespace-nowrap ${getStatusColor(status)}`}>{status}</span> );
 const ChartContainer: React.FC<{ title: string; children: React.ReactNode, className?: string }> = ({ title, children, className = '' }) => (
-    <div className={`bg-gray-900/50 p-4 rounded-lg flex flex-col ${className}`}><h3 className="text-lg font-bold text-slate-100 mb-4">{title}</h3><div className="flex-grow">{children}</div></div>
+    <div className={`bg-slate-900/50 p-4 rounded-lg flex flex-col ${className}`}><h3 className="text-lg font-bold text-slate-100 mb-4">{title}</h3><div className="flex-grow">{children}</div></div>
 );
 
-const vesselColors = ['#60a5fa', '#4ade80', '#fb923c'];
+const vesselColors = ['#0ea5e9', '#38bdf8', '#7dd3fc']; // sky-500, sky-400, sky-300
 
 // --- MAIN COMPONENT ---
 export default function ReportModal({ show, onClose, scenario, assetData, damageDistribution }: ReportModalProps) {
     if (!show) return null;
 
-    const tooltipStyle = { backgroundColor: 'rgba(31, 41, 55, 0.9)', backdropFilter: 'blur(4px)', border: '1px solid #4A5568', borderRadius: '0.5rem', color: '#FFF' };
+    const tooltipStyle = { backgroundColor: 'rgba(30, 41, 59, 0.9)', backdropFilter: 'blur(4px)', border: '1px solid #475569', borderRadius: '0.5rem', color: '#FFF' };
     const legendFormatter = (value: string) => <span className="text-slate-300">{value}</span>;
 
     return (
@@ -99,18 +100,18 @@ export default function ReportModal({ show, onClose, scenario, assetData, damage
                             animation: none !important;
                             display: block;
                         }
-                        .printable-report .bg-gray-800 { background: white !important; }
-                        .printable-report .bg-gray-900\\/50 { background: #f9fafb !important; border: 1px solid #e5e7eb; }
-                        .printable-report .bg-gray-700\\/50 { background: #f3f4f6 !important; }
+                        .printable-report .bg-slate-800 { background: white !important; }
+                        .printable-report .bg-slate-900\\/50 { background: #f9fafb !important; border: 1px solid #e5e7eb; }
+                        .printable-report .bg-slate-700\\/50 { background: #f3f4f6 !important; }
                         .printable-report .text-white, .printable-report .text-slate-100, .printable-report .text-slate-300 { color: #1f2937 !important; }
-                        .printable-report .text-gray-400, .printable-report .text-sky-300 { color: #4b5563 !important; }
+                        .printable-report .text-slate-400, .printable-report .text-sky-300 { color: #4b5563 !important; }
                         .printable-report .text-sky-400 { color: #0ea5e9 !important; }
                         .printable-report .text-red-400 { color: #ef4444 !important; }
                         .printable-report .text-red-300, .printable-report .text-yellow-300, .printable-report .text-lime-300, .printable-report .text-green-300 { color: #1f2937 !important; }
                         .printable-report .bg-red-900\\/50, .printable-report .bg-yellow-900\\/50, .printable-report .bg-lime-900\\/50, .printable-report .bg-green-900\\/50 { background: #f3f4f6 !important; }
                         .printable-report .no-print { display: none; }
-                        .printable-report .border-gray-700 { border-color: #e5e7eb !important; }
-                        .printable-report .recharts-surface, .printable-report .recharts-wrapper, .printable-report .recharts-legend-wrapper { filter: grayscale(1); }
+                        .printable-report .border-slate-700 { border-color: #e5e7eb !important; }
+                        .printable-report .recharts-surface, .printable-report .recharts-wrapper, .printable-report .recharts-legend-wrapper { filter: none; }
                         .printable-report table thead { background: #f3f4f6 !important; }
                         .printable-report table tbody tr { border-color: #e5e7eb !important; }
                         .printable-report table tr:nth-child(even) { background-color: #f9fafb !important; }
@@ -118,15 +119,15 @@ export default function ReportModal({ show, onClose, scenario, assetData, damage
                     }
                 `}
                 </style>
-                <div className="bg-gray-800 rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col text-slate-200 transform transition-all duration-300 ease-out scale-95 opacity-0 animate-fade-in-scale printable-report">
+                <div className="bg-slate-800 rounded-xl shadow-2xl max-w-5xl w-full max-h-[90vh] flex flex-col text-slate-200 transform transition-all duration-300 ease-out scale-95 opacity-0 animate-fade-in-scale printable-report">
                     {/* Header */}
-                    <div className="flex justify-between items-center p-4 border-b border-gray-700 flex-shrink-0 no-print">
+                    <div className="flex justify-between items-center p-4 border-b border-slate-700 flex-shrink-0 no-print">
                         <h2 id="report-title" className="text-xl font-bold text-white">Pré-Relatório de Análise de Risco</h2>
                         <div className="flex items-center gap-2">
                             <button onClick={() => window.print()} className="flex items-center bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors duration-200 text-sm">
                                 <PrintIcon /> Imprimir
                             </button>
-                            <button onClick={onClose} className="text-gray-400 hover:text-white hover:bg-gray-700 rounded-full p-1 transition-colors" aria-label="Close modal">
+                            <button onClick={onClose} className="text-slate-400 hover:text-white hover:bg-slate-700 rounded-full p-1 transition-colors" aria-label="Close modal">
                                 <CloseIcon />
                             </button>
                         </div>
@@ -150,9 +151,9 @@ export default function ReportModal({ show, onClose, scenario, assetData, damage
 
                         <section className="mb-6">
                             <h2 className="text-xl font-bold text-slate-100 mb-3">Detalhes de Dano por Ativo</h2>
-                            <div className="overflow-x-auto rounded-lg border border-gray-700">
+                            <div className="overflow-x-auto rounded-lg border border-slate-700">
                                 <table className="w-full text-sm text-left text-slate-300">
-                                    <thead className="text-xs text-gray-400 uppercase bg-gray-700/60">
+                                    <thead className="text-xs text-slate-400 uppercase bg-slate-700/60">
                                         <tr>
                                             {['ID', 'Tipo', 'Valor (USD)', 'Intensidade', 'Dano (%)', 'Status'].map(h => 
                                                 <th key={h} scope="col" className="px-4 py-3">{h}</th>
@@ -161,7 +162,7 @@ export default function ReportModal({ show, onClose, scenario, assetData, damage
                                     </thead>
                                     <tbody>
                                         {assetData.map(asset => (
-                                            <tr key={asset.id} className="border-b border-gray-700 last:border-b-0 hover:bg-gray-700/50">
+                                            <tr key={asset.id} className="border-b border-slate-700 last:border-b-0 hover:bg-slate-700/50">
                                                 <td className="px-4 py-3 font-medium text-white whitespace-nowrap">{asset.id}</td>
                                                 <td className="px-4 py-3">{asset.tipo}</td>
                                                 <td className="px-4 py-3">{asset.valor.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
@@ -194,15 +195,15 @@ export default function ReportModal({ show, onClose, scenario, assetData, damage
                                         <BarChart data={damageDistribution.byComponent} layout="vertical" margin={{ top: 5, right: 30, left: 80, bottom: 5 }}>
                                             <XAxis type="number" hide tick={{ fill: '#a0aec0' }} />
                                             <YAxis dataKey="name" type="category" width={80} tick={{ fill: '#a0aec0', fontSize: 12 }} />
-                                            <Tooltip cursor={{ fill: 'rgba(55, 65, 81, 0.5)' }} contentStyle={tooltipStyle} formatter={(value) => [`$${value} M`, 'Custo']}/>
-                                            <Bar dataKey="Custo (Milhões USD)" fill="#84cc16" radius={[0, 4, 4, 0]} barSize={20} />
+                                            <Tooltip cursor={{ fill: 'rgba(51, 65, 85, 0.5)' }} contentStyle={tooltipStyle} formatter={(value) => [`$${value} M`, 'Custo']}/>
+                                            <Bar dataKey="Custo (Milhões USD)" fill="#38bdf8" radius={[0, 4, 4, 0]} barSize={20} />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </ChartContainer>
                             </div>
                         </section>
 
-                        <footer className="mt-6 pt-4 border-t border-gray-700 text-xs text-gray-500">
+                        <footer className="mt-6 pt-4 border-t border-slate-700 text-xs text-slate-500">
                             <p><strong>Aviso:</strong> Este é um pré-relatório gerado com dados de simulação. As perdas são estimativas e não devem ser usadas para fins de decisão final sem uma análise aprofundada. Desenvolvido por EnvironPact.</p>
                         </footer>
                     </div>

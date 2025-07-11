@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo } from 'react';
 import { ResponsiveContainer, LineChart, BarChart, PieChart, Pie, Cell, CartesianGrid, XAxis, YAxis, Tooltip, Legend, Line, Bar } from 'recharts';
 import type { Scenario } from '../types';
@@ -31,7 +32,7 @@ const damageDistributionData = {
     { name: 'Outros', 'Custo (Milhões USD)': 5 },
   ],
 };
-const vesselColors = ['#60a5fa', '#4ade80', '#fb923c'];
+const vesselColors = ['#0ea5e9', '#38bdf8', '#7dd3fc']; // sky-500, sky-400, sky-300
 
 const assetStatusData = [
     { id: 'FPSO-001', tipo: 'FPSO', valor: 380000000, lat: 25.4, lon: -74.8, intensidade: '210 km/h', dano: 68, status: 'Dano Severo' },
@@ -49,13 +50,13 @@ const SearchIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" he
 
 // --- REUSABLE COMPONENTS ---
 const StatCard: React.FC<{ title: string; value: string; description: string; valueColor?: string }> = ({ title, value, description, valueColor = 'text-white' }) => (
-    <div className="bg-gray-800 border border-gray-700 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200"><h3 className="text-gray-400 font-semibold uppercase tracking-wide">{title}</h3><p className={`text-4xl font-bold mt-2 ${valueColor}`}>{value}</p><p className="text-sm text-gray-400 mt-2">{description}</p></div>
+    <div className="bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-200"><h3 className="text-slate-400 font-semibold uppercase tracking-wide">{title}</h3><p className={`text-4xl font-bold mt-2 ${valueColor}`}>{value}</p><p className="text-sm text-slate-400 mt-2">{description}</p></div>
 );
 const TabButton: React.FC<{ label: string; active: boolean; onClick: () => void }> = ({ label, active, onClick }) => (
-    <button onClick={onClick} className={`py-3 px-4 text-sm font-semibold transition-all duration-200 focus:outline-none ${ active ? 'border-b-2 border-sky-400 text-sky-400' : 'text-gray-400 hover:text-white hover:border-b-2 hover:border-gray-600' }`}>{label}</button>
+    <button onClick={onClick} className={`py-3 px-4 text-sm font-semibold transition-all duration-200 focus:outline-none ${ active ? 'border-b-2 border-sky-400 text-sky-400' : 'text-slate-400 hover:text-white hover:border-b-2 hover:border-slate-600' }`}>{label}</button>
 );
 const ChartContainer: React.FC<{ title: string; children: React.ReactNode, className?: string }> = ({ title, children, className = '' }) => (
-    <div className={`bg-gray-800 border border-gray-700 p-6 rounded-xl shadow-lg flex flex-col ${className}`}><h3 className="text-xl font-bold text-slate-100 mb-4">{title}</h3><div className="flex-grow">{children}</div></div>
+    <div className={`bg-slate-800 border border-slate-700 p-6 rounded-xl shadow-lg flex flex-col ${className}`}><h3 className="text-xl font-bold text-slate-100 mb-4">{title}</h3><div className="flex-grow">{children}</div></div>
 );
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -63,18 +64,18 @@ const getStatusColor = (status: string) => {
         case 'Dano Moderado': return 'bg-yellow-900/50 text-yellow-300 ring-1 ring-inset ring-yellow-400/30';
         case 'Dano Leve': return 'bg-lime-900/50 text-lime-300 ring-1 ring-inset ring-lime-400/30';
         case 'Dano Mínimo': return 'bg-green-900/50 text-green-300 ring-1 ring-inset ring-green-400/30';
-        default: return 'bg-gray-700 text-gray-300 ring-1 ring-inset ring-gray-600';
+        default: return 'bg-slate-700 text-slate-300 ring-1 ring-inset ring-slate-600';
     }
 };
 const StatusBadge: React.FC<{ status: string }> = ({ status }) => ( <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${getStatusColor(status)}`}>{status}</span> );
 
 // --- CHART PROPS ---
 const commonChartProps = {
-    grid: <CartesianGrid strokeDasharray="3 3" stroke="#4A5568" />,
-    xAxisTick: { fill: '#a0aec0' },
-    yAxisTick: { fill: '#a0aec0' },
-    axisLabelStyle: { fill: '#a0aec0' },
-    tooltipStyle: { backgroundColor: 'rgba(31, 41, 55, 0.9)', backdropFilter: 'blur(4px)', border: '1px solid #4A5568', borderRadius: '0.5rem', color: '#FFF' },
+    grid: <CartesianGrid strokeDasharray="3 3" stroke="#334155" />, // slate-700
+    xAxisTick: { fill: '#94a3b8' }, // slate-400
+    yAxisTick: { fill: '#94a3b8' }, // slate-400
+    axisLabelStyle: { fill: '#94a3b8' },
+    tooltipStyle: { backgroundColor: 'rgba(30, 41, 59, 0.9)', backdropFilter: 'blur(4px)', border: '1px solid #475569', borderRadius: '0.5rem', color: '#FFF' }, // slate-800, slate-600
     legendFormatter: (value: string) => <span className="text-slate-300">{value}</span>,
 };
 
@@ -86,7 +87,7 @@ const ImpactMetricsTab = () => (
             <StatCard title="Perda Máxima Provável (PML)" value="$145.2 M" description="Evento de 200 anos de retorno" valueColor="text-red-400"/>
             <StatCard title="Ativos Afetados" value="42%" description="Do valor total exposto" valueColor="text-slate-100"/>
         </section>
-        <section className="mt-8 bg-gray-800 border border-gray-700 rounded-xl shadow-lg p-6">
+        <section className="mt-8 bg-slate-800 border border-slate-700 rounded-xl shadow-lg p-6">
             <h2 className="text-xl font-bold text-slate-100 mb-1">Curva de Excedência de Probabilidade</h2>
             <div className="h-[400px] w-full mt-4">
                 <ResponsiveContainer width="100%" height="100%">
@@ -96,7 +97,7 @@ const ImpactMetricsTab = () => (
                         <YAxis dataKey="perda" name="Perdas" unit="M" label={{ value: 'Perda (Milhões USD)', angle: -90, position: 'insideLeft', offset: -10, style: commonChartProps.axisLabelStyle }} tickFormatter={(value) => `${value}`} tick={commonChartProps.yAxisTick}/>
                         <Tooltip formatter={(value, name) => [`$${value} M`, name]} labelFormatter={(label) => `Retorno: ${label} anos`} contentStyle={commonChartProps.tooltipStyle}/>
                         <Legend verticalAlign="top" height={36} formatter={commonChartProps.legendFormatter} />
-                        <Line type="monotone" dataKey="perda" name="Perdas (Milhões USD)" stroke="#2563eb" strokeWidth={2.5} dot={{ r: 4, fill: '#2563eb' }} activeDot={{ r: 8 }} />
+                        <Line type="monotone" dataKey="perda" name="Perdas (Milhões USD)" stroke="#0ea5e9" strokeWidth={2.5} dot={{ r: 4, fill: '#0ea5e9' }} activeDot={{ r: 8 }} />
                     </LineChart>
                 </ResponsiveContainer>
             </div>
@@ -112,9 +113,9 @@ const DamageDistributionTab = () => (
                     {commonChartProps.grid}
                     <XAxis dataKey="name" tick={commonChartProps.xAxisTick} />
                     <YAxis label={{ value: 'Milhões USD', angle: -90, position: 'insideLeft', offset: 10, style: commonChartProps.axisLabelStyle }} tick={commonChartProps.yAxisTick}/>
-                    <Tooltip cursor={{ fill: 'rgba(55, 65, 81, 0.5)' }} contentStyle={commonChartProps.tooltipStyle} />
+                    <Tooltip cursor={{ fill: 'rgba(51, 65, 85, 0.5)' }} contentStyle={commonChartProps.tooltipStyle} />
                     <Legend verticalAlign="top" height={36} formatter={commonChartProps.legendFormatter}/>
-                    <Bar dataKey="Perdas por Região" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="Perdas por Região" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
                 </BarChart>
             </ResponsiveContainer>
         </ChartContainer>
@@ -136,9 +137,9 @@ const DamageDistributionTab = () => (
                         {commonChartProps.grid}
                         <XAxis dataKey="name" tick={commonChartProps.xAxisTick} />
                         <YAxis label={{ value: 'Milhões USD', angle: -90, position: 'insideLeft', offset: -10, style: commonChartProps.axisLabelStyle }} tick={commonChartProps.yAxisTick} />
-                        <Tooltip cursor={{ fill: 'rgba(55, 65, 81, 0.5)' }} contentStyle={commonChartProps.tooltipStyle} />
+                        <Tooltip cursor={{ fill: 'rgba(51, 65, 85, 0.5)' }} contentStyle={commonChartProps.tooltipStyle} />
                         <Legend verticalAlign="top" height={36} formatter={commonChartProps.legendFormatter}/>
-                        <Bar dataKey="Custo (Milhões USD)" fill="#84cc16" radius={[4, 4, 0, 0]} />
+                        <Bar dataKey="Custo (Milhões USD)" fill="#38bdf8" radius={[4, 4, 0, 0]} />
                     </BarChart>
                 </ResponsiveContainer>
             </ChartContainer>
@@ -158,8 +159,8 @@ const AssetStatusTab = () => {
     }, [searchTerm]);
 
     return (
-        <div className="bg-gray-800 rounded-xl shadow-lg border border-gray-700">
-            <div className="p-4 border-b border-gray-700">
+        <div className="bg-slate-800 rounded-xl shadow-lg border border-slate-700">
+            <div className="p-4 border-b border-slate-700">
                 <div className="relative">
                     <SearchIcon />
                     <input
@@ -167,13 +168,13 @@ const AssetStatusTab = () => {
                         placeholder="Buscar por embarcação (ID ou Tipo)..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-gray-600 bg-gray-700 text-white rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition placeholder-gray-400"
+                        className="w-full pl-10 pr-4 py-2 border border-slate-600 bg-slate-700 text-white rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition placeholder-slate-400"
                     />
                 </div>
             </div>
             <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left text-slate-300">
-                    <thead className="text-xs text-gray-400 uppercase bg-gray-700/60">
+                    <thead className="text-xs text-slate-400 uppercase bg-slate-700/60">
                         <tr>
                             {['ID', 'Tipo', 'Valor (USD)', 'Latitude', 'Longitude', 'Intensidade', 'Dano (%)', 'Status'].map(h => 
                                 <th key={h} scope="col" className="px-6 py-3">{h}</th>
@@ -182,7 +183,7 @@ const AssetStatusTab = () => {
                     </thead>
                     <tbody>
                         {filteredAssets.map(asset => (
-                            <tr key={asset.id} className="border-b border-gray-700 hover:bg-gray-700/50">
+                            <tr key={asset.id} className="border-b border-slate-700 hover:bg-slate-700/50">
                                 <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{asset.id}</td>
                                 <td className="px-6 py-4">{asset.tipo}</td>
                                 <td className="px-6 py-4">{asset.valor.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 })}</td>
@@ -195,7 +196,7 @@ const AssetStatusTab = () => {
                         ))}
                     </tbody>
                 </table>
-                 {filteredAssets.length === 0 && <p className="text-center text-gray-400 py-8">Nenhum ativo encontrado.</p>}
+                 {filteredAssets.length === 0 && <p className="text-center text-slate-400 py-8">Nenhum ativo encontrado.</p>}
             </div>
         </div>
     );
@@ -216,7 +217,7 @@ export default function ResultsDashboard({ scenario }: ResultsDashboardProps) {
   };
 
   return (
-    <div className="bg-gray-900 text-slate-200 p-4 sm:p-6 md:p-8 h-full overflow-y-auto">
+    <div className="bg-slate-900 text-slate-200 p-4 sm:p-6 md:p-8 h-full overflow-y-auto">
       <div>
         <header className="flex justify-between items-start mb-6">
           <div>
@@ -225,7 +226,7 @@ export default function ResultsDashboard({ scenario }: ResultsDashboardProps) {
           </div>
         </header>
 
-        <nav className="border-b border-gray-700">
+        <nav className="border-b border-slate-700">
           <TabButton label="Métricas" active={activeTab === 'Métricas'} onClick={() => setActiveTab('Métricas')} />
           <TabButton label="Distribuição" active={activeTab === 'Distribuição'} onClick={() => setActiveTab('Distribuição')} />
           <TabButton label="Ativos" active={activeTab === 'Ativos'} onClick={() => setActiveTab('Ativos')} />
@@ -236,13 +237,13 @@ export default function ResultsDashboard({ scenario }: ResultsDashboardProps) {
             <footer className="mt-8 flex flex-wrap justify-between items-center gap-4">
                 <button 
                     onClick={() => setShowReportModal(true)}
-                    className="flex-grow sm:flex-grow-0 items-center justify-center bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors duration-200"
+                    className="flex-grow sm:flex-grow-0 items-center justify-center bg-sky-600 hover:bg-sky-700 text-white font-bold py-2 px-5 rounded-lg shadow-md transition-colors duration-200"
                 >
                     Gerar pré-relatório
                 </button>
                 <div className="flex justify-end gap-4 flex-grow sm:flex-grow-0">
-                    <button className="flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200"><ExportCsvIcon />CSV</button>
-                    <button className="flex items-center justify-center bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200"><ExportJsonIcon />JSON</button>
+                    <button className="flex items-center justify-center bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200"><ExportCsvIcon />CSV</button>
+                    <button className="flex items-center justify-center bg-slate-600 hover:bg-slate-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200"><ExportJsonIcon />JSON</button>
                 </div>
             </footer>
         </main>
