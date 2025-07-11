@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Climatrix - Climate Risk Pricing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+     integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+     crossorigin=""/>
+    <style>
+      /* Custom styles for Leaflet popup */
+      .leaflet-popup-content-wrapper {
+        border-radius: 8px;
+      }
+      .leaflet-popup-content {
+        margin: 12px !important;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+      /* Animation for modal */
+      @keyframes fade-in-scale {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .animate-fade-in-scale {
+        animation: fade-in-scale 0.2s ease-out forwards;
+      }
+
+      /* Custom styles for range slider thumb */
+      input[type=range].range-thumb-sky::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #0ea5e9; /* sky-500 */
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid #fff;
+        margin-top: -6px; /* align with track */
+      }
+      input[type=range].range-thumb-sky::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        background: #0ea5e9; /* sky-500 */
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid #fff;
+      }
+      /* Style for custom asset marker */
+      .custom-asset-marker-icon {
+        background-color: #f97316; /* orange-500 */
+        border-radius: 50%;
+        border: 2px solid rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "geojson": "https://esm.sh/geojson@^0.5.0",
+    "react-leaflet": "https://esm.sh/react-leaflet@^5.0.0",
+    "leaflet": "https://esm.sh/leaflet@^1.9.4",
+    "recharts": "https://esm.sh/recharts@^2.12.7"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="overflow-hidden">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
