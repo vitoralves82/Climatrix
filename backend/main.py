@@ -25,9 +25,6 @@ class ExposureIn(BaseModel):
 
 class HazardIn(BaseModel):
     type: Literal["TC"] = "TC"
-    start_lat: float
-    start_lon: float
-    duration_hours: int = 4
     event_id: str
     climate_scenario: str = "CURRENT"
 
