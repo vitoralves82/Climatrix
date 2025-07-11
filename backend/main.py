@@ -5,6 +5,8 @@ from climada.hazard import TCTracks, TropCyclone, Centroids
 from climada.entity import Exposures, ImpactFuncSet, ImpfTropCyclone
 from climada.engine import Impact
 import pandas as pd
+import geopandas as gpd
+from shapely.geometry import Point
 
 
 app = FastAPI()
@@ -60,25 +62,40 @@ def build_tc_hazard(h: HazardIn, locs):
 
 def build_exposures(exp_list: list[ExposureIn]) -> Exposures:
     """Recebe a lista de ativos do usuário e devolve um objeto Climada Exposures."""
+    
+    # Criar DataFrame com os dados
+    data = []
+    for e in exp_list:
+        data.append({
+            'latitude': e.lat,
+            'longitude': e.lon,
+            'value': e.value_usd,
+            'id': e.id,
+            'category': e.type
+        })
+    
+    df = pd.DataFrame(data)
+    
+    # Criar geometria Point para cada linha
+    geometry = [Point(row['longitude'], row['latitude']) for _, row in df.iterrows()]
+    
+    # Criar GeoDataFrame
+    gdf = gpd.GeoDataFrame(df, geometry=geometry, crs='epsg:4326')
+    
+    # Criar objeto Exposures e atribuir o GeoDataFrame
     exp = Exposures()
-    # preencher listas simples
-    exp.lon  = [e.lon  for e in exp_list]
-    exp.lat  = [e.lat  for e in exp_list]
-    exp.value= [e.value_usd for e in exp_list]
-    exp.id   = [e.id   for e in exp_list]
-    exp.category = [e.type for e in exp_list]
-    # gerar GeoSeries geometry
-    exp.set_lat_lon()
+    exp.gdf = gdf
+    
     return exp
 
 # ----- rota principal -----
 @app.post("/api/calculate")
-
 def calc(req: CalcRequest):
     exp = build_exposures(req.exposures)
-    tc  = build_tc_hazard(
+    tc = build_tc_hazard(
         req.hazard, 
-        list(zip(exp.lon, exp.lat)))
+        list(zip([e.lon for e in req.exposures], [e.lat for e in req.exposures]))
+    )
 
     impf = ImpactFuncSet()
     base_if = ImpfTropCyclone.from_emanuel_usa()
@@ -94,11 +111,11 @@ def calc(req: CalcRequest):
         "assets": [
             {
               "id": row.id,
-              "type": row.type,
+              "type": row.category,
               "lat": row.latitude,
               "lon": row.longitude,
               "value_usd": row.value,
-              "damage_pct": round(float(imp.eai_exp[i]/row.value*100),2)
+              "damage_pct": round(float(imp.eai_exp[i]/row.value*100), 2)
             }
             for i, row in exp.gdf.iterrows()
         ]
