@@ -27,12 +27,8 @@ class HazardIn(BaseModel):
     type: Literal["TC"] = "TC"
     start_lat: float
     start_lon: float
-    wind_speed: float
-    radius_max_wind: float
-    translation_speed: float
-    track_angle: float
-    central_pressure: float
     duration_hours: int = 4
+    event_id: str
     climate_scenario: str = "CURRENT"
 
 class CalcRequest(BaseModel):
@@ -41,23 +37,20 @@ class CalcRequest(BaseModel):
 
 # ----- funções auxiliares -----
 def build_tc_hazard(h: HazardIn, locs):
-    tr = TCTracks()
-    track = tr.generate_synthetic_track(
-        basin='NA',
-        initial_pos=(h.start_lon, h.start_lat),
-        wind_speed=h.wind_speed,
-        central_pressure=h.central_pressure,
-        radius_max_wind=h.radius_max_wind,
-        track_angle=h.track_angle,
-        track_speed=h.translation_speed,
-        duration=h.duration_hours
-    )
+    # ↓ baixa o netcdf do IBTrACS a primeira vez e guarda em ~/climada/data/
+    tr = TCTracks.from_ibtracs_netcdf(provider="usa", storm_id=h.event_id)
+
+    # equaliza timestep e (opcional) gera trilhas probabilísticas
+    tr.equal_timestep()
+
     cent = Centroids.from_exposures_locs(locs, res=0.25)
-    tc = TropCyclone.from_tracks(tr, centroids=cent)
+    tc   = TropCyclone.from_tracks(tr, centroids=cent)
+
     if h.climate_scenario == "RCP45":
         tc = tc.apply_climate_scenario_knu(rcp_scenario=45)
     elif h.climate_scenario == "RCP85":
         tc = tc.apply_climate_scenario_knu(rcp_scenario=85)
+
     return tc
 
 def build_exposures(exp_list: list[ExposureIn]) -> Exposures:
