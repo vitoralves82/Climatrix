@@ -71,7 +71,8 @@ def build_exposures(exp_list: list[ExposureIn]) -> Exposures:
             'longitude': e.lon,
             'value': e.value_usd,
             'id': e.id,
-            'category': e.type
+            'category': e.type,
+            'impf_TC': 1  # ID da função de impacto para ciclones tropicais
         })
     
     df = pd.DataFrame(data)
@@ -82,9 +83,12 @@ def build_exposures(exp_list: list[ExposureIn]) -> Exposures:
     # Criar GeoDataFrame
     gdf = gpd.GeoDataFrame(df, geometry=geometry, crs='epsg:4326')
     
-    # Criar objeto Exposures e atribuir o GeoDataFrame
-    exp = Exposures()
-    exp.gdf = gdf
+    # Criar objeto Exposures passando o GeoDataFrame para o construtor
+    exp = Exposures(gdf)
+    
+    # Configurar geometria e verificar consistência
+    exp.set_geometry_points()
+    exp.check()
     
     return exp
 
