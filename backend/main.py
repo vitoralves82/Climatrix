@@ -35,12 +35,11 @@ class CalcRequest(BaseModel):
 # ----- funções auxiliares -----
 def build_tc_hazard(h: HazardIn, locs):
     # ↓ baixa o netcdf do IBTrACS a primeira vez e guarda em ~/climada/data/
-    tr = TCTracks.from_ibtracs_netcdf(provider="usa", storm_id=h.event_id)
+    tr = TCTracks().read_ibtracs_subset(storm_id=h.event_id)   # carrega só o track
+    cent = Centroids.from_exposures_locs(locs, res=1.0) 
 
     # equaliza timestep e (opcional) gera trilhas probabilísticas
-    tr.equal_timestep()
-
-    cent = Centroids.from_exposures_locs(locs, res=0.25)
+    tr.equal_timestep()    
     tc   = TropCyclone.from_tracks(tr, centroids=cent)
 
     if h.climate_scenario == "RCP45":
